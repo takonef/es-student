@@ -3,8 +3,10 @@
 #include "hardware/regs/addressmap.h"
 #include "hardware/regs/sio.h"
 #include <stdio.h>
-    
-const uint LED_PIN = 25;
+#include "led.h"
+#include "log.h"
+#include "device.h"
+
 const uint BUTTON_PIN = 15;
 const uint DEBOUNCE_MS = 20;
 
@@ -15,39 +17,38 @@ bool get_button_debounce(uint pin)
     return state && gpio_get(pin);
 }
 
-void set_led(bool on)
-{
-    gpio_put(LED_PIN, on);
-    printf("led %s\n", on ? "on" : "off");
-}
-
-bool handle_command(int command, bool led)
+void handle_command(int command)
 {
     if (command == 'e')
     {
-        led = true;
-        set_led(led);
+        led_set(true);
+        LOG_INF("led %s\n", led_is_on() ? "on" : "off");
     }
     else if (command == 'd')
     {
-        led = false;
-        set_led(led);
+        led_set(false);
+        LOG_INF("led %s\n", led_is_on() ? "on" : "off");
+    }
+    else if (command == 'v')
+    {
+        log_version();
+    }
+    else if (command == 'i')
+    {
+        device_info();
     }
     else
     {
-        printf("unknown command: %c\n", command);
+        LOG_ERR("unknown command: %c\n", command);
     }
-
-    return led;
 }
 
 int main()
 {
-   gpio_init(LED_PIN);
+   led_init();
    gpio_init(BUTTON_PIN);
    gpio_set_dir(BUTTON_PIN, GPIO_IN);
    gpio_pull_up(BUTTON_PIN);
-   gpio_set_dir(LED_PIN, GPIO_OUT);
    stdio_init_all();
 
    bool led = false;
@@ -57,21 +58,22 @@ int main()
    {
         bool current = get_button_debounce(BUTTON_PIN);
 
-       if (previous == true && current == false)
-       {
-           led = !led;
-           set_led(led);
-       }
+        if (previous == true && current == false)
+        {
+            led_toggle();
+            LOG_INF("led %s\n", led_is_on() ? "on" : "off");
+        }
 
-       previous = current;
+        previous = current;
 
-       int command = getchar_timeout_us(0);
+        int command = getchar_timeout_us(0);
 
         if (command == PICO_ERROR_TIMEOUT)
         {
             continue;
         }
 
-        led = handle_command(command, led);
+        LOG_DBG("got %c\n", command);
+        handle_command(command);
    }
 }
