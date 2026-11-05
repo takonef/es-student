@@ -4,9 +4,18 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
+#include "command.h"
 
 #include "pico/stdlib.h"
 #include "hardware/regs/addressmap.h"
+
+uint32_t data_variable = 100;
+uint32_t bss_variable;
+
+int main(void);
+
+#define VECTOR_TABLE 0x10000100
+#define GPIO_IN      0xd0000004
 
 extern char __flash_binary_start;
 extern char __flash_binary_end;
@@ -96,4 +105,86 @@ void mem_info(void)
            "ram free",
            (unsigned)heap_size,
            (unsigned)stack_size);
+}
+
+void fw_info(void)
+{
+    data_variable++;
+    bss_variable++;
+
+    uint32_t stack_variable = 1946;
+
+    uint32_t *heap_variable = (uint32_t *)malloc(sizeof(uint32_t));
+    if (heap_variable != NULL)
+    {
+        *heap_variable = 1951;
+    }
+
+    uint16_t *main_code    = (uint16_t *)((uintptr_t)main & ~1u);
+    uint16_t *fw_info_code = (uint16_t *)((uintptr_t)fw_info & ~1u);
+
+    printf("object          address     value\n");
+
+    printf("main            0x%08x  0x%04x\n",
+           (unsigned)(uintptr_t)main,
+           (unsigned)*main_code);
+
+    printf("fw_info         0x%08x  0x%04x\n",
+           (unsigned)(uintptr_t)fw_info,
+           (unsigned)*fw_info_code);
+
+    printf("commands        0x%08x\n",
+           (unsigned)(uintptr_t)commands);
+
+    for (uint i = 0; i < command_count; i++)
+    {
+        printf("- %-12s 0x%08x\n",
+               commands[i].name,
+               (unsigned)(uintptr_t)commands[i].handler);
+    }
+
+    printf("DEVICE_PROJECT  0x%08x  %s\n",
+           (unsigned)(uintptr_t)DEVICE_PROJECT,
+           DEVICE_PROJECT);
+
+    printf("DEVICE_BOARD    0x%08x  %s\n",
+           (unsigned)(uintptr_t)DEVICE_BOARD,
+           DEVICE_BOARD);
+
+    printf("data_variable   0x%08x  %u\n",
+           (unsigned)(uintptr_t)&data_variable,
+           (unsigned)data_variable);
+
+    printf("bss_variable    0x%08x  %u\n",
+           (unsigned)(uintptr_t)&bss_variable,
+           (unsigned)bss_variable);
+
+    printf("stack_variable  0x%08x  %u\n",
+           (unsigned)(uintptr_t)&stack_variable,
+           (unsigned)stack_variable);
+
+    printf("heap_variable   0x%08x  %u\n",
+           (unsigned)(uintptr_t)heap_variable,
+           heap_variable != NULL ? (unsigned)*heap_variable : 0u);
+
+    free(heap_variable);
+}
+
+void boot_info(void)
+{
+    const uint32_t *vectors = (const uint32_t *)VECTOR_TABLE;
+
+    uint32_t stack_top     = vectors[0];
+    uint32_t reset_handler = vectors[1];
+
+    volatile uint32_t *gpio_in = (volatile uint32_t *)GPIO_IN;
+    uint32_t level = (*gpio_in >> led_pin()) & 1u;
+
+    printf("vector table   0x%08x\n", (unsigned)VECTOR_TABLE);
+    printf("  stack top    0x%08x\n", (unsigned)stack_top);
+    printf("  reset        0x%08x\n", (unsigned)reset_handler);
+    printf("  reset (even) 0x%08x\n", (unsigned)(reset_handler & ~1u));
+    printf("gpio in        0x%08x\n", (unsigned)GPIO_IN);
+    printf("  led bit      %u\n",   (unsigned)level);
+    printf("  gpio_get     %u\n",   (unsigned)gpio_get(led_pin()));
 }
