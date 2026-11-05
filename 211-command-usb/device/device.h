@@ -21,3 +21,5 @@ struct info_t
     char name[13];       // 13 байт — посередине
     uint8_t revision;    // 1 байт — в хвост
 };
+
+extern struct info_t device_card; 
