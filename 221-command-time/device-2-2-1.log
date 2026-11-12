@@ -3,24 +3,24 @@
 устройство: 2e8a:000a
 серийный номер: E66098F29B6A7732
 порт: COM6
-начало: 2026-11-12T17:00:59
+начало: 2026-11-12T17:14:21
    0.000 --> clk_info
    0.001 <-- clk_info
    0.002 <-- dbg read_line:191 got clk_info
-   0.003 <-- signal     set_khz measured_khz
-   0.004 <-- clk_ref      12000        12001
-   0.004 <-- clk_sys     125000       125000
-   0.005 <-- clk_peri     48000        48000
-   0.006 <-- clk_usb      48000        48000
+   0.004 <-- signal     set_khz measured_khz
+   0.005 <-- clk_ref      12000        12001
+   0.005 <-- clk_sys     125000       125000
+   0.006 <-- clk_peri     48000        48000
+   0.007 <-- clk_usb      48000        48000
    0.007 <-- clk_adc      48000        48000
-   0.008 <-- rosc             -         5455
-   2.087 --> info
-   2.088 <-- info
-   2.089 <-- dbg read_line:191 got info
-   2.089 <-- project: 211-command-usb
-   2.091 <-- repo: https://github.com/takonef/es-student
-   2.091 <-- board: pico
-   2.092 <-- serial: E66098F29B6A7732
-   2.093 <-- chip: manufacturer 0x927, part 0x0002, revision 1
-   2.094 <-- pico-sdk: 2.3.0
+   0.008 <-- rosc             -         5456
+   2.103 --> info
+   2.104 <-- info
+   2.104 <-- dbg read_line:191 got info
+   2.105 <-- project: 221-command-time
+   2.106 <-- repo: https://github.com/takonef/es-student
+   2.107 <-- board: pico
+   2.107 <-- serial: E66098F29B6A7732
+   2.108 <-- chip: manufacturer 0x927, part 0x0002, revision 1
+   2.108 <-- pico-sdk: 2.3.0
 итог: отправлено команд 2, принято строк 17
