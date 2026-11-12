@@ -1,0 +1,20 @@
+задание: 2.2.1
+проект: 221-command-time
+устройство: 2e8a:000a
+серийный номер: E66098F29B6A7732
+порт: COM6
+начало: 2026-11-12T16:25:45
+   0.000 --> clk_info
+   0.181 <-- clk_info
+   0.182 <-- dbg read_line:131 got clk_info
+   0.182 <-- err handle_command:112 unknown command: clk_info
+   2.027 --> info
+   2.122 <-- info
+   2.123 <-- dbg read_line:131 got info
+   2.124 <-- project: 211-command-usb
+   2.125 <-- repo: https://github.com/takonef/es-student
+   2.125 <-- board: pico
+   2.125 <-- serial: E66098F29B6A7732
+   2.126 <-- chip: manufacturer 0x927, part 0x0002, revision 1
+   2.126 <-- pico-sdk: 2.3.0
+итог: отправлено команд 2, принято строк 11
